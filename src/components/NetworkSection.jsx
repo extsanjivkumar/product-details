@@ -20,7 +20,7 @@ export default function NetworkSection() {
   return (
     <SectionCard title="Network" loading={loading} error={error} onRetry={refetch}>
       {data && (
-        <Steps direction="vertical" current={data.length - 1} items={items} />
+        <Steps orientation="vertical" current={data.length - 1} items={items} />
       )}
     </SectionCard>
   );

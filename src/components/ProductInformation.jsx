@@ -2,6 +2,7 @@ import { Descriptions, Tag } from 'antd';
 import { fetchProductInfo } from '../api/productApi';
 import { useAsyncData } from '../hooks/useAsyncData';
 import SectionCard from './SectionCard';
+import { Typography } from 'antd';
 
 export default function ProductInformation() {
   const { data, loading, error, refetch } = useAsyncData(fetchProductInfo);
@@ -14,14 +15,45 @@ export default function ProductInformation() {
       onRetry={refetch}
     >
       {data && (
-        <Descriptions bordered column={{ xs: 1, sm: 2, md: 2 }}>
-          <Descriptions.Item label="Product ID">{data?.id}</Descriptions.Item>
-          <Descriptions.Item label="Product Name">{data?.productName}</Descriptions.Item>
-          <Descriptions.Item label="SKU">{data?.sku}</Descriptions.Item>
-          <Descriptions.Item label="Category">{data?.category}</Descriptions.Item>
-          <Descriptions.Item label="Brand">{data?.brand}</Descriptions.Item>
-          <Descriptions.Item label="Description" span={2}>{data?.description}</Descriptions.Item>
-        </Descriptions>
+        <Descriptions
+        bordered
+        column={2}
+        styles={{
+          label: {
+            width: 180,
+            fontWeight: 600,
+            whiteSpace: "wrap",
+          },
+          content: {
+            whiteSpace: "normal",
+            wordBreak: "break-word",
+          },
+        }}
+      >
+        <Descriptions.Item label="Product ID">
+          {data?.id || "Data not available"}
+        </Descriptions.Item>
+      
+        <Descriptions.Item label="Product Name">
+          {data?.productName || "Data not available"}
+        </Descriptions.Item>
+      
+        <Descriptions.Item label="SKU">
+          {data?.sku || "Data not available"}
+        </Descriptions.Item>
+      
+        <Descriptions.Item label="Category">
+          {data?.category || "Data not available"}
+        </Descriptions.Item>
+      
+        <Descriptions.Item label="Brand">
+          {data?.brand || "Data not available"}
+        </Descriptions.Item>
+      
+        <Descriptions.Item label="Description">
+          {data?.description || "Data not available"}
+        </Descriptions.Item>
+      </Descriptions>
       )}
     </SectionCard>
   );
