@@ -29,7 +29,7 @@ export default function AvailabilitySection() {
           columns={columns}
           dataSource={data}
           rowKey="location"
-          pagination={false}
+          pagination={true}
           scroll={{ x: true }}
         />
       )}

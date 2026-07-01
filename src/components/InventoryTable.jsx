@@ -21,7 +21,7 @@ export default function InventoryTable() {
           columns={columns}
           dataSource={data}
           rowKey="warehouse"
-          pagination={false}
+          pagination={true}
           scroll={{ x: true }}
         />
       )}
