@@ -18,17 +18,7 @@ export default function ProductInformation() {
         <Descriptions
         bordered
         column={2}
-        styles={{
-          label: {
-            width: 180,
-            fontWeight: 600,
-            whiteSpace: "wrap",
-          },
-          content: {
-            whiteSpace: "normal",
-            wordBreak: "break-word",
-          },
-        }}
+        size='small'
       >
         <Descriptions.Item label="Product ID">
           {data?.id || "Data not available"}
