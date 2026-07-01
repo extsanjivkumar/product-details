@@ -1,27 +1,51 @@
-import { Steps, Tag } from 'antd';
-import { fetchNetwork } from '../api/productApi';
-import { useAsyncData } from '../hooks/useAsyncData';
-import SectionCard from './SectionCard';
+import { Timeline, Tag } from "antd";
+import { fetchNetwork } from "../api/productApi";
+import { useAsyncData } from "../hooks/useAsyncData";
+import SectionCard from "./SectionCard";
 
 const statusColor = {
-  Delivered: 'success',
-  'In Transit': 'processing',
-  Pending: 'default',
+  Delivered: "green",
+  "In Transit": "blue",
+  Pending: "orange",
 };
 
 export default function NetworkSection() {
-  const { data, loading, error, refetch } = useAsyncData(fetchNetwork);
+  const { data } = useAsyncData(fetchNetwork);
 
-  const items = data?.map((item) => ({
-    title: `${item.source} → ${item.destination}`,
-    description: <Tag color={statusColor[item.status]}>{item.status}</Tag>,
-  }));
+  const items =
+    data?.map((item) => ({
+      color:
+        item.status === "Delivered"
+          ? "green"
+          : item.status === "In Transit"
+          ? "blue"
+          : "gray",
+
+      children: (
+        <div>
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>
+            {item.source} → {item.destination}
+          </div>
+
+          <div>Transfer: {item.transferDate}</div>
+          <div>Expected: {item.expectedDelivery}</div>
+
+          {item.actualDelivery && (
+            <div>Delivered: {item.actualDelivery}</div>
+          )}
+
+          <div style={{ marginTop: 8 }}>
+            <Tag color={statusColor[item.status]}>
+              {item.status}
+            </Tag>
+          </div>
+        </div>
+      ),
+    })) ?? [];
 
   return (
-    <SectionCard title="Network" loading={loading} error={error} onRetry={refetch}>
-      {data && (
-        <Steps orientation="vertical" current={data.length - 1} items={items} />
-      )}
+    <SectionCard title="Supply Network">
+      <Timeline items={items} />
     </SectionCard>
   );
 }

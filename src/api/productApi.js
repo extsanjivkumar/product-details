@@ -8,7 +8,20 @@ const mockFetch = async (data) => {
   return data;
 };
 
+export const getDataPage = (data = [], page = 1, pageSize = 5) => {
+  const startIndex = (page - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+
+  return {
+    data: data.slice(startIndex, endIndex),
+    total: data.length,
+    current: page,
+    pageSize,
+    totalPages: Math.ceil(data.length / pageSize),
+  };
+};
+
 export const fetchProductInfo = () => mockFetch(productInfo);
-export const fetchInventory = () => mockFetch(inventory);
-export const fetchAvailability = () => mockFetch(availability);
+export const fetchInventory = (page, pageSize) => mockFetch(getDataPage(inventory, page, pageSize));
+export const fetchAvailability = (page, pageSize) => mockFetch(getDataPage(availability, page, pageSize));
 export const fetchNetwork = () => mockFetch(network);
