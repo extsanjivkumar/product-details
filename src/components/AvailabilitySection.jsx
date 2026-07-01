@@ -1,7 +1,7 @@
 import { Table, Tag } from 'antd';
 import { fetchAvailability } from '../api/productApi';
 import SectionCard from './SectionCard';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const columns = [
   { title: 'Location', dataIndex: 'location', key: 'location' },
@@ -33,6 +33,7 @@ export default function AvailabilitySection() {
   });
 
   const fetchData = async (page = 1, pageSize = 5) => {
+
     setLoading(true);
 
     try {
@@ -60,7 +61,7 @@ export default function AvailabilitySection() {
   }, []);
 
   return (
-    <SectionCard title="Availability" loading={loading} error={error}>
+    <SectionCard title="Availability" loading={loading} error={error} onRetry={fetchData}>
       <Table
         columns={columns}
         dataSource={data}

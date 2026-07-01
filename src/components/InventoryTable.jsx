@@ -72,7 +72,7 @@ export default function InventoryTable() {
   }, []);
 
   return (
-    <SectionCard title="Availability" loading={loading} error={error}>
+    <SectionCard title="Inventory" loading={loading} error={error}>
     <Table
       columns={columns}
       dataSource={data}

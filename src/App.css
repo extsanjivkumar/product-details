@@ -1,0 +1,10 @@
+.product-description .ant-descriptions-item-label {
+    width: 180px;
+    min-width: 180px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .product-description .ant-descriptions-item-content {
+    word-break: break-word;
+  }
