@@ -1,22 +1,30 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from "react";
 
 export function useAsyncData(fetchFn) {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const refetch = useCallback(() => {
+  const execute = useCallback(async (...args) => {
     setLoading(true);
     setError(null);
-    fetchFn()
-      .then(setData)
-      .catch((err) => setError(err.message || 'Something went wrong'))
-      .finally(() => setLoading(false));
+
+    try {
+      const result = await fetchFn(...args);
+      setData(result);
+      return result;
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, [fetchFn]);
 
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  return { data, loading, error, refetch };
+  return {
+    data,
+    loading,
+    error,
+    execute,
+  };
 }

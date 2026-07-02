@@ -3,6 +3,7 @@ import { fetchNetwork } from "../api/productApi";
 import SectionCard from "./SectionCard";
 import { useState, useEffect } from "react";
 import { Table } from "antd";
+import {useAsyncData} from '../hooks/useAsyncData'
 
 
 const columns = [
@@ -58,10 +59,13 @@ const columns = [
 ];
 
 export default function NetworkSection() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
+  const {
+    data: response,
+    loading,
+    error,
+    execute,
+  } = useAsyncData(fetchNetwork);
+  
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
@@ -69,44 +73,33 @@ export default function NetworkSection() {
     showSizeChanger: true,
     pageSizeOptions: [5, 10, 20, 50]
   });
-
-  const fetchData = async (page = 1, pageSize = 5) => {
-    setLoading(true);
-
-    try {
-
-      const response = await fetchNetwork(page, pageSize);
-
-      setData(response.data);
-
-      setPagination({
-        current: page,
-        pageSize,
-        total: response.total,
-        showSizeChanger: true,
-        pageSizeOptions: [5, 10, 20, 50]
-      });
-    } catch {
-      setError("Something went wrong")
-    } finally {
-      setLoading(false);
-    }
+  
+  useEffect(() => {
+    loadData(1, 5);
+  }, []);
+  
+  const loadData = async (page = 1, pageSize = 5) => {
+    const result = await execute(page, pageSize);
+  
+    setPagination({
+      current: page,
+      pageSize,
+      total: result.total,
+      showSizeChanger: true,
+      pageSizeOptions: [5, 10, 20, 50]
+    });
   };
 
-  useEffect(() => {
-    fetchData(1, 5);
-  }, []);
-
   return (
-    <SectionCard title="Inventory" loading={loading} error={error} onRetry={fetchData}>
+    <SectionCard title="Inventory" loading={loading} error={error} onRetry={loadData}>
     <Table
       columns={columns}
-      dataSource={data}
+      dataSource={response?.data || []}
       loading={loading}
       rowKey={(record, index) => `${record.warehouse}-${index}`}
       pagination={pagination}
       onChange={(pagination) => {
-        fetchData(pagination.current, pagination.pageSize);
+        loadData(pagination.current, pagination.pageSize);
       }}
     />
     </SectionCard>

@@ -2,38 +2,47 @@ import { Descriptions, Tag } from 'antd';
 import { fetchProductInfo } from '../api/productApi';
 import { useState, useEffect } from 'react';
 import SectionCard from './SectionCard';
-
+import {useAsyncData} from '../hooks/useAsyncData'
 
 
 export default function ProductInformation() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const response = await fetchProductInfo();
-      setData(response);
-    } catch {
-      setError("Something went wrong")
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const {
+    data,
+    loading,
+    error,
+    execute,
+  } = useAsyncData(fetchProductInfo);
+  
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 5,
+    total: 0,
+    showSizeChanger: true,
+    pageSizeOptions: [5, 10, 20, 50]
+  });
+  
   useEffect(() => {
-    fetchData();
+    loadData(1, 5);
   }, []);
+  
+  const loadData = async (page = 1, pageSize = 5) => {
+    const result = await execute(page, pageSize);
+  
+    setPagination({
+      current: page,
+      pageSize,
+      total: result.total,
+      showSizeChanger: true,
+      pageSizeOptions: [5, 10, 20, 50]
+    });
+  };
 
   return (
     <SectionCard
       title="Product Information"
       loading={loading}
       error={error}
-      onRetry={fetchData}
+      onRetry={loadData}
     >
       {data && (
         <Descriptions
