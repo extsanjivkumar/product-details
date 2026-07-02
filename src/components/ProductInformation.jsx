@@ -33,7 +33,7 @@ export default function ProductInformation() {
       title="Product Information"
       loading={loading}
       error={error}
-      // onRetry={refetch}
+      onRetry={fetchData}
     >
       {data && (
         <Descriptions

@@ -98,7 +98,7 @@ export default function NetworkSection() {
   }, []);
 
   return (
-    <SectionCard title="Inventory" loading={loading} error={error}>
+    <SectionCard title="Inventory" loading={loading} error={error} onRetry={fetchData}>
     <Table
       columns={columns}
       dataSource={data}
