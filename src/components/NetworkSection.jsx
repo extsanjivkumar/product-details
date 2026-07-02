@@ -1,51 +1,114 @@
-import { Timeline, Tag } from "antd";
+import { Tag } from "antd";
 import { fetchNetwork } from "../api/productApi";
-import { useAsyncData } from "../hooks/useAsyncData";
 import SectionCard from "./SectionCard";
+import { useState, useEffect } from "react";
+import { Table } from "antd";
 
-const statusColor = {
-  Delivered: "green",
-  "In Transit": "blue",
-  Pending: "orange",
-};
+
+const columns = [
+  {
+    title: "Network",
+    dataIndex: "network",
+    key: "network",
+  },
+  {
+    title: "Source",
+    dataIndex: "source",
+    key: "source",
+  },
+  {
+    title: "Destination",
+    dataIndex: "destination",
+    key: "destination",
+  },
+  {
+    title: "Dispatch Date",
+    dataIndex: "dispatchDate",
+    key: "dispatchDate",
+  },
+  {
+    title: "Expected Arrival",
+    dataIndex: "expectedArrival",
+    key: "expectedArrival",
+  },
+  {
+    title: "Actual Arrival",
+    dataIndex: "actualArrival",
+    key: "actualArrival",
+    render: (value) => value || "-",
+  },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    render: (status) => (
+      <Tag
+        color={
+          status === "Delivered"
+            ? "success"
+            : status === "In Transit"
+            ? "processing"
+            : "default"
+        }
+      >
+        {status}
+      </Tag>
+    ),
+  },
+];
 
 export default function NetworkSection() {
-  // const { data } = useAsyncData(fetchNetwork);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // const items =
-  //   data?.map((item) => ({
-  //     color:
-  //       item.status === "Delivered"
-  //         ? "green"
-  //         : item.status === "In Transit"
-  //         ? "blue"
-  //         : "gray",
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 5,
+    total: 0,
+    showSizeChanger: true,
+    pageSizeOptions: [5, 10, 20, 50]
+  });
 
-  //     children: (
-  //       <div>
-  //         <div style={{ fontWeight: 600, marginBottom: 4 }}>
-  //           {item.source} → {item.destination}
-  //         </div>
+  const fetchData = async (page = 1, pageSize = 5) => {
+    setLoading(true);
 
-  //         <div>Transfer: {item.transferDate}</div>
-  //         <div>Expected: {item.expectedDelivery}</div>
+    try {
 
-  //         {item.actualDelivery && (
-  //           <div>Delivered: {item.actualDelivery}</div>
-  //         )}
+      const response = await fetchNetwork(page, pageSize);
 
-  //         <div style={{ marginTop: 8 }}>
-  //           <Tag color={statusColor[item.status]}>
-  //             {item.status}
-  //           </Tag>
-  //         </div>
-  //       </div>
-  //     ),
-  //   })) ?? [];
+      setData(response.data);
+
+      setPagination({
+        current: page,
+        pageSize,
+        total: response.total,
+        showSizeChanger: true,
+        pageSizeOptions: [5, 10, 20, 50]
+      });
+    } catch {
+      setError("Something went wrong")
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(1, 5);
+  }, []);
 
   return (
-    <SectionCard title="Supply Network">
-      {/* <Timeline items={items} /> */}
+    <SectionCard title="Inventory" loading={loading} error={error}>
+    <Table
+      columns={columns}
+      dataSource={data}
+      loading={loading}
+      rowKey={(record, index) => `${record.warehouse}-${index}`}
+      pagination={pagination}
+      onChange={(pagination) => {
+        fetchData(pagination.current, pagination.pageSize);
+      }}
+    />
     </SectionCard>
   );
 }

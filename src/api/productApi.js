@@ -24,4 +24,4 @@ export const getDataPage = (data = [], page = 1, pageSize = 5) => {
 export const fetchProductInfo = () => mockFetch(productInfo);
 export const fetchInventory = (page, pageSize) => mockFetch(getDataPage(inventory, page, pageSize));
 export const fetchAvailability = (page, pageSize) => mockFetch(getDataPage(availability, page, pageSize));
-export const fetchNetwork = () => mockFetch(network);
+export const fetchNetwork = (page, pageSize) => mockFetch(getDataPage(network, page, pageSize));
